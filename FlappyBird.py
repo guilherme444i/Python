@@ -161,8 +161,8 @@ def desenhar_tela(tela, passaros, canos, chao, pontos):
     #desenhando os canos
     for cano in canos:
         cano.desenhar(tela)
-    #desenhando p texto de pontuação
-    texto = FONTE_PONTOS.render(f'Pontuação:(pontos)', 1, (255, 255, 255))
+    #desenhando o texto de pontuação
+    texto = FONTE_PONTOS.render(f'Pontuação:{pontos}', 1, (255, 255, 255))
     tela.blit(texto, (TELA_LARGURA - 10 - texto.get_width(), 10))
     #desenhando o chão
     chao.desenhar(tela)
