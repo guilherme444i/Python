@@ -75,7 +75,7 @@ class Passaro:
         self.imagem = self.IMAGENS[0]
 
     def pular(self):
-        self.velocidade = -10.5
+        self.velocidade = -8.5
         self.tempo = 0
         self.altura = self.y
 
@@ -181,7 +181,7 @@ def main():
 
     rodando = True
     while rodando:
-        relogio.tick(30)
+        relogio.tick(29)
         #interação com o usúario
         for evento in pygame.event.get():
             if evento.type== pygame.QUIT:
