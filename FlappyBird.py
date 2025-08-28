@@ -189,7 +189,7 @@ def main():
                 pygame.quit()
                 quit()
             if evento.type == pygame.KEYDOWN:
-                if evento.type == pygame.K_SPACE:
+                if evento.key == pygame.K_SPACE:
                     for passaro in passaros:
                         passaro.pular()
                 if evento.type == pygame.K_UP:
