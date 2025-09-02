@@ -2,6 +2,17 @@ import pygame
 import os
 import random
 
+pygame.mixer.init()
+
+pygame.font.init()
+FONTE_PONTOS = pygame.font.SysFont('arial', 50)
+
+#Função mix
+def tocar_musica(arquivo, Loop=True):
+    pygame.mixer.stop()
+    pygame.mixer.music.load(arquivo)
+    pygame.mixer.music.play(-1 if Loop else 0)
+
 TELA_LARGURA = 500
 TELA_ALTURA = 800
 
@@ -152,6 +163,44 @@ class Chao:
         tela.blit(self.IMAGEM, (self.x2, self.y))
 
 #funções do sistema
+def gameOver(tela):
+    tocar_musica(os.path.join('sounds', 'gameover.ogg'), Loop=False)
+
+
+    fonte = pygame.font.SysFont('arial', 60)
+    texto_game_over = fonte.render('Game Over', True, (255, 0, 0))
+    texto_retry = FONTE_PONTOS.render('Retry', True, (255, 255, 255))
+
+    #Botão retry
+    botao_largura = 200
+    botao_altura = 60
+    botao_x = (TELA_ALTURA - botao_largura) // 2
+    botao_y = (TELA_ALTURA - botao_altura) // 2 + 50
+    botao_rect = pygame.Rect(botao_x, botao_y, botao_largura, botao_altura)
+
+    while True:
+        tela.blit(IMAGEM_BACKGROUND, (0, 0))
+        tela.blit(texto_game_over, ((TELA_LARGURA - texto_game_over.get_width()) // 2, 200))
+    
+        pygame.draw.rect(tela, (0, 100, 200), botao_rect)
+        tela.blit(
+        texto_retry,
+        (
+            botao_x + (botao_largura - texto_retry.get_width()) // 2,
+            botao_y + (botao_altura - texto_retry.get_height()) // 2
+        )
+    )
+    
+        pygame.display.update()
+
+        for evento in pygame.event.get():
+            if evento.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+            if evento.type == pygame.MOUSEBUTTONDOWN:
+                if botao_rect.collidepoint(evento.pos):
+                    return True
+
 def desenhar_tela(tela, passaros, canos, chao, pontos):
     #Desenhando o fundo da tela
     tela.blit(IMAGEM_BACKGROUND, (0, 0))
@@ -170,6 +219,8 @@ def desenhar_tela(tela, passaros, canos, chao, pontos):
     pygame.display.update()
 
 def main():
+    tocar_musica(os.path.join('sounds', 'overflow.ogg'), Loop=True)
+
     passaros = [Passaro(230, 350)]
     chao = Chao(730)
     canos= [Cano(700)]
@@ -207,7 +258,12 @@ def main():
             for cano in canos:
                 for i, passaro in enumerate(passaros):
                     if cano.colidir(passaro):
-                        passaro.pop(i)
+                        if gameOver(tela):
+                            main()
+                        else:
+                            pygame.quit()
+                            quit()
+                    
                 if not cano.passou and passaro.x > cano.x:
                     cano.passou = True
                     adicionar_cano = True
@@ -224,7 +280,12 @@ def main():
 
             for i, passaro in enumerate(passaros):
                 if (passaro.y + passaro.imagem.get_height()) > chao.y or passaro.y < 0:
-                    passaro.pop(i)
+                    if gameOver(tela):
+                        main()
+                    else:
+                        pygame.quit()
+                        quit()
+                        
 
             desenhar_tela(tela, passaros, canos, chao, pontos)
 if __name__ == "__main__":
